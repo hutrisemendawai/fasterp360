@@ -1,7 +1,12 @@
+# Project Structure
+
+Below is the directory layout for both backend and frontend. Drop this into `docs/STRUCTURE.md`.
+
+```text
 fasterp360/
 ├── docs/
 │   ├── USAGE.md             # Getting-started guide
-│   └── STRUCTURE.md        # (this file)
+│   └── STRUCTURE.md         # This file
 │
 ├── pom.xml                  # Maven parent POM
 └── src/
@@ -62,3 +67,6 @@ fasterp360-frontend/
 
 README.md                              # Project overview & quick links
 LICENSE                                # MIT (or Apache 2.0) license
+```
+
+
