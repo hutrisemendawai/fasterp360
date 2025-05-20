@@ -30,10 +30,10 @@ This document describes all requirements, setup steps, and basic usage for the *
 ## 🔧 Backend Setup (Spring Boot)
 
 ### 1. Clone the repo
-```bash
+```
 git clone https://github.com/<your-org>/fasterp360.git
 cd fasterp360
-````
+```
 
 ### 2. Configure PostgreSQL
 
@@ -285,17 +285,3 @@ Please follow the existing package structure and add any new modules under `modu
 ## 📄 License
 
 This project is licensed under MIT. See [LICENSE](../LICENSE) for details.
-
-```
-
-Save this as **`docs/USAGE.md`** (or embed into your root `README.md`). It covers:
-
-- All software prerequisites  
-- Step-by-step backend setup & run  
-- Frontend scaffolding, configuration, and run  
-- Basic login & inventory usage  
-- How to build and deploy in production  
-- Testing and contribution guidelines  
-
-Feel free to adapt paths or ports as needed!
-```
