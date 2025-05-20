@@ -1,6 +1,3 @@
-Below is a single Markdown document you can drop into your repo (e.g. **`docs/USAGE.md`**) that walks through everything—from cloning and running the Spring Boot backend, to scaffolding and running the React+Vite+Tailwind frontend.
-
-````markdown
 # fasterp360 ERP — Getting Started Guide
 
 This document describes all requirements, setup steps, and basic usage for the **fasterp360** ERP system, covering both the Spring Boot backend and the React+Vite+Tailwind frontend.
@@ -40,7 +37,7 @@ cd fasterp360
 1. Start your Postgres server.
 2. Create database & user:
 
-   ```sql
+   ```
    CREATE DATABASE fasterp360;
    CREATE USER fasterp_user WITH ENCRYPTED PASSWORD 'your_password';
    GRANT ALL PRIVILEGES ON DATABASE fasterp360 TO fasterp_user;
@@ -50,7 +47,7 @@ cd fasterp360
 
 Edit `src/main/resources/application.properties`:
 
-```properties
+```
 spring.datasource.url=jdbc:postgresql://localhost:5432/fasterp360
 spring.datasource.username=fasterp_user
 spring.datasource.password=your_password
@@ -70,7 +67,7 @@ springdoc.swagger-ui.path=/swagger-ui.html
 
 Ensure your `User` entity is annotated:
 
-```java
+```
 @Entity
 @Table(name = "app_user")
 public class User implements UserDetails {
@@ -80,7 +77,7 @@ public class User implements UserDetails {
 
 ### 5. Build & run
 
-```bash
+```
 mvn clean package
 mvn spring-boot:run
 ```
@@ -101,7 +98,7 @@ mvn spring-boot:run
 
 From the repo root:
 
-```bash
+```
 npm init vite@latest fasterp360-frontend -- --template react
 cd fasterp360-frontend
 npm install
@@ -109,7 +106,7 @@ npm install
 
 ### 2. Install styling tools
 
-```bash
+```
 npm install -D tailwindcss postcss autoprefixer @tailwindcss/postcss
 ```
 
@@ -117,7 +114,7 @@ npm install -D tailwindcss postcss autoprefixer @tailwindcss/postcss
 
 #### `tailwind.config.cjs`
 
-```js
+```
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -131,7 +128,7 @@ module.exports = {
 
 #### `postcss.config.cjs`
 
-```js
+```
 module.exports = {
   plugins: {
     '@tailwindcss/postcss': {},
@@ -144,7 +141,7 @@ module.exports = {
 
 In `src/index.css`, replace contents with:
 
-```css
+```
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -152,7 +149,7 @@ In `src/index.css`, replace contents with:
 
 Then in `src/main.jsx` ensure you have:
 
-```js
+```
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -161,7 +158,7 @@ import './index.css';   // ← Tailwind styles
 
 ### 5. Install Axios & React Router
 
-```bash
+```
 npm install axios react-router-dom
 ```
 
@@ -169,7 +166,7 @@ npm install axios react-router-dom
 
 Create `src/api/axios.js`:
 
-```js
+```
 import axios from 'axios';
 
 const api = axios.create({
@@ -206,7 +203,7 @@ fasterp360-frontend/
 
 ### 8. Start the frontend
 
-```bash
+```
 npm run dev
 ```
 
@@ -249,13 +246,13 @@ npm run dev
 
 1. **Backend**:
 
-   ```bash
+   ```
    mvn clean package
    ```
 
 2. **Frontend**:
 
-   ```bash
+   ```
    npm run build
    ```
 
@@ -263,7 +260,7 @@ npm run dev
 
 3. **Run**
 
-   ```bash
+   ```
    java -jar target/fasterp360-0.0.1-SNAPSHOT.jar
    ```
 
