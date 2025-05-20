@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @SuppressWarnings("unused")
     @Autowired
     private UserService userService;
 
