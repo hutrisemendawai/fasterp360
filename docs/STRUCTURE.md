@@ -1,6 +1,6 @@
 # 📁 Project Structure
 
-Below is the directory layout for both backend and frontend. Save this as `docs/STRUCTURE.md`.
+Below is the directory layout for both backend and frontend.
 
 ```text
 fasterp360/
