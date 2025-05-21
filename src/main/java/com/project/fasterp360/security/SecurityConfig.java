@@ -1,15 +1,16 @@
 package com.project.fasterp360.security;
 
 import com.project.fasterp360.filter.JwtFilter;
-import com.project.fasterp360.security.service.UserService;
+import com.project.fasterp360.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
-import org.springframework.security.authentication.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.*;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -18,19 +19,19 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    private final UserService userService;
     private final JwtFilter jwtFilter;
+    private final UserService userService;
 
     @Autowired
-    public SecurityConfig(UserService userService, JwtFilter jwtFilter) {
-        this.userService = userService;
+    public SecurityConfig(JwtFilter jwtFilter, UserService userService) {
         this.jwtFilter = jwtFilter;
+        this.userService = userService;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-          // 1) CORS config
+          // 1) CORS configuration
           .cors(cors -> cors.configurationSource(req -> {
               var cfg = new CorsConfiguration();
               cfg.setAllowedOrigins(List.of("http://localhost:5173"));
@@ -40,26 +41,22 @@ public class SecurityConfig {
               return cfg;
           }))
 
-          // 2) disable CSRF (for stateless JWT APIs)
+          // 2) disable CSRF (stateless JWT API)
           .csrf(csrf -> csrf.disable())
 
-          // 3) endpoint authorization rules
+          // 3) authorize endpoints
           .authorizeHttpRequests(auth -> auth
               .requestMatchers("/api/auth/**").permitAll()
               .anyRequest().authenticated()
           )
 
-          // 4) add JWT filter before Spring Security’s UsernamePasswordAuthenticationFilter
-          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        ;
+          // 4) add JWT filter before Spring security’s
+          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**  
-     * Expose AuthenticationManager so you can inject it into your AuthController  
-     * (needed for AuthenticationManager.authenticate(...)).  
-     */
+    /** Expose AuthenticationManager to be used in your AuthController */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
@@ -67,7 +64,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /** Password encoder bean for encoding & matching user passwords. */
+    /** BCrypt password encoder for hashing and verifying user passwords */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -1,4 +1,4 @@
-package com.project.fasterp360.security.entity;
+package com.project.fasterp360.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -2,8 +2,8 @@ package com.project.fasterp360.controller;
 
 import com.project.fasterp360.dto.AuthRequest;
 import com.project.fasterp360.dto.AuthResponse;
-import com.project.fasterp360.security.entity.User;
-import com.project.fasterp360.security.repository.UserRepository;
+import com.project.fasterp360.entity.User;
+import com.project.fasterp360.repository.UserRepository;
 import com.project.fasterp360.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
