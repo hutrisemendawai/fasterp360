@@ -1,12 +1,12 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom'
+import React from 'react'
 
 export default function Layout({ children }) {
-  const nav = useNavigate();
+  const nav = useNavigate()
   const logout = () => {
-    localStorage.removeItem('token');
-    nav('/login', { replace: true });
-  };
+    localStorage.removeItem('token')
+    nav('/login', { replace: true })
+  }
 
   return (
     <div className="flex h-screen">
@@ -31,6 +31,15 @@ export default function Layout({ children }) {
           >
             Inventory
           </NavLink>
+          <NavLink
+            to="/dashboard/hr/employees"
+            className={({ isActive }) =>
+              'block px-3 py-2 rounded ' +
+              (isActive ? 'bg-gray-700' : 'hover:bg-gray-700')
+            }
+          >
+            Employees
+          </NavLink>
           <button
             onClick={logout}
             className="w-full text-left px-3 py-2 hover:bg-gray-700 rounded mt-6"
@@ -43,5 +52,5 @@ export default function Layout({ children }) {
         {children}
       </main>
     </div>
-  );
+  )
 }

@@ -5,6 +5,7 @@ import com.project.fasterp360.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;                        // <— add this
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,11 +47,17 @@ public class SecurityConfig {
 
           // 3) authorize endpoints
           .authorizeHttpRequests(auth -> auth
+              // open registration & login
               .requestMatchers("/api/auth/**").permitAll()
+
+              // allow anyone to GET employees (list & single)
+              .requestMatchers(HttpMethod.GET, "/api/hr/employees/**").permitAll()
+
+              // everything else requires a valid JWT
               .anyRequest().authenticated()
           )
 
-          // 4) add JWT filter before Spring security’s
+          // 4) add JWT filter before Spring Security’s processing
           .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
