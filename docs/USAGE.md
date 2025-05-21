@@ -1,25 +1,29 @@
 # 🚀 fasterp360 — Usage Guide
 
-This document walks you through installing, configuring, and running the full-stack **fasterp360** ERP application (Spring Boot backend + React / Vite / Tailwind frontend).
+This document walks you through installing, configuring, and running the full-stack **fasterp360** ERP application (Spring Boot backend + React / Vite / Tailwind frontend), including user registration tied to employee records.
 
 ---
 
 ## 📋 Prerequisites
 
-- **Java & Spring Boot**  
-  - JDK 17 or higher  
-  - Maven 3.8+  
+* **Java & Spring Boot**
 
-- **Database**  
-  - PostgreSQL 12+  
+  * JDK 17 or higher
+  * Maven 3.8+
 
-- **Frontend**  
-  - Node.js 16+ (npm included)  
+* **Database**
 
-- **Tools**  
-  - Git  
-  - VS Code (or your IDE of choice)  
-  - Postman / curl (for API testing)  
+  * PostgreSQL 12+
+
+* **Frontend**
+
+  * Node.js 16+ (npm included)
+
+* **Tools**
+
+  * Git
+  * VS Code (or your IDE of choice)
+  * Postman / curl (for API testing)
 
 ---
 
@@ -34,15 +38,17 @@ cd fasterp360
 
 ## 🐘 2. Backend Setup (Spring Boot)
 
-1. **Create your database & user**  
+1. **Create your database & user**
+
    ```sql
    CREATE DATABASE fasterp360;
    CREATE USER fasterp_user WITH ENCRYPTED PASSWORD 'your_password';
    GRANT ALL PRIVILEGES ON DATABASE fasterp360 TO fasterp_user;
    ```
 
-2. **Configure Spring Boot**  
+2. **Configure Spring Boot**
    Edit `src/main/resources/application.properties` and set:
+
    ```properties
    spring.datasource.url=jdbc:postgresql://localhost:5432/fasterp360
    spring.datasource.username=fasterp_user
@@ -58,23 +64,20 @@ cd fasterp360
    springdoc.swagger-ui.path=/swagger-ui.html
    ```
 
-3. **Ensure `app_user` table mapping**  
-   In your `User` entity class:
-   ```java
-   @Entity
-   @Table(name = "app_user")
-   public class User implements UserDetails {
-     // …
-   }
-   ```
+3. **Ensure `User` & `Role` table mapping**
 
-4. **Build & launch**  
+   * Make sure your entities match table names (e.g., `@Table(name = "app_user")`).
+   * The application seeds `ROLE_ADMIN` and `ROLE_USER` on startup (`Fasterp360Application`).
+
+4. **Build & launch**
+
    ```bash
    mvn clean package
    mvn spring-boot:run
    ```
-   - The API will be live on **http://localhost:8080/**
-   - Swagger UI → **http://localhost:8080/swagger-ui.html**
+
+   * The API will be live on **[http://localhost:8080/](http://localhost:8080/)**
+   * Swagger UI → **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
 
 ---
 
@@ -82,21 +85,24 @@ cd fasterp360
 
 > All commands below assume you’re in the project root (`fasterp360/`).
 
-1. **Scaffold**  
+1. **Scaffold**
+
    ```bash
    npm init vite@latest fasterp360-frontend -- --template react
    cd fasterp360-frontend
    npm install
    ```
 
-2. **Install styling & PostCSS plugins**  
+2. **Install styling & PostCSS plugins**
+
    ```bash
    npm install -D tailwindcss postcss autoprefixer @tailwindcss/postcss
    ```
 
-3. **Create configuration files**  
+3. **Create configuration files**
 
-   - **tailwind.config.cjs**  
+   * **tailwind.config.cjs**
+
      ```js
      /** @type {import('tailwindcss').Config} */
      module.exports = {
@@ -108,7 +114,8 @@ cd fasterp360
        plugins: [],
      };
      ```
-   - **postcss.config.cjs**  
+   * **postcss.config.cjs**
+
      ```js
      module.exports = {
        plugins: {
@@ -118,14 +125,17 @@ cd fasterp360
      };
      ```
 
-4. **Add Tailwind imports**  
+4. **Add Tailwind imports**
    In `src/index.css` replace everything with:
+
    ```css
    @tailwind base;
    @tailwind components;
    @tailwind utilities;
    ```
+
    And ensure `src/main.jsx` includes:
+
    ```js
    import React from 'react'
    import ReactDOM from 'react-dom/client'
@@ -137,13 +147,15 @@ cd fasterp360
    )
    ```
 
-5. **Install runtime dependencies**  
+5. **Install runtime dependencies**
+
    ```bash
    npm install axios react-router-dom
    ```
 
-6. **Configure API client**  
+6. **Configure API client**
    Create `src/api/axios.js`:
+
    ```js
    import axios from 'axios';
 
@@ -152,17 +164,25 @@ cd fasterp360
      headers: { 'Content-Type': 'application/json' },
    });
 
+   // attach token automatically
+   api.interceptors.request.use(config => {
+     const token = localStorage.getItem('token');
+     if (token) config.headers.Authorization = `Bearer ${token}`;
+     return config;
+   });
+
    export default api;
    ```
 
-7. **Verify folder structure**  
+7. **Verify folder structure**
+
    ```
    fasterp360-frontend/
    ├── public/
    ├── src/
    │   ├── api/           — axios.js
    │   ├── components/    — Layout, ProtectedRoute
-   │   ├── pages/         — Login.jsx, Inventory/List.jsx, Inventory/Detail.jsx
+   │   ├── pages/         — Login.jsx, Register.jsx, Inventory/, hr/
    │   ├── App.jsx
    │   └── main.jsx
    ├── tailwind.config.cjs
@@ -170,70 +190,98 @@ cd fasterp360
    └── vite.config.js
    ```
 
-8. **Start development server**  
+8. **Start development server**
+
    ```bash
    npm run dev
    ```
-   - Open **http://localhost:5173/** in your browser.
+
+   * Open **[http://localhost:5173/](http://localhost:5173/)** in your browser.
 
 ---
 
 ## ▶️ 4. Running & Testing
 
-1. **Login**  
-   - **POST** `http://localhost:8080/api/auth/login`  
+1. **Registration (new user)**
+
+   * Navigate to **[http://localhost:5173/register](http://localhost:5173/register)**
+   * Select an existing employee record or use `?employeeId=<id>` to prefill the dropdown
+   * On success: redirected to **/login**
+
+2. **Login**
+
+   * **POST** `http://localhost:8080/api/auth/login`
+
      ```json
      { "username": "admin", "password": "admin123" }
      ```
-   - Store the returned JWT (e.g. in `localStorage`).
+   * On success: saves `token` in `localStorage` and redirects to **/dashboard**
 
-2. **Access protected pages**  
-   - Wrap inventory routes with your `<ProtectedRoute>` component.
+3. **Access protected pages**
 
-3. **Inventory Endpoints**  
-   | Action          | URL                                      | Method |
-   |-----------------|------------------------------------------|--------|
-   | List products   | `/api/inventory/products`                | GET    |
-   | Create product  | `/api/inventory/products`                | POST   |
-   | View / Edit     | `/api/inventory/products/:id`            | GET/PUT|
+   * All `/dashboard/**` routes require a valid JWT; otherwise `<ProtectedRoute>` sends you back to `/login`.
 
-4. **Run backend tests**  
+4. **Inventory Endpoints**
+
+   | Action         | URL                           | Method  |
+   | -------------- | ----------------------------- | ------- |
+   | List products  | `/api/inventory/products`     | GET     |
+   | Create product | `/api/inventory/products`     | POST    |
+   | View / Edit    | `/api/inventory/products/:id` | GET/PUT |
+
+5. **HR Endpoints**
+
+   | Action               | URL                     | Method  |
+   | -------------------- | ----------------------- | ------- |
+   | List employees       | `/api/hr/employees`     | GET     |
+   | Create employee      | `/api/hr/employees`     | POST    |
+   | View / Edit employee | `/api/hr/employees/:id` | GET/PUT |
+
+6. **Run backend tests**
+
    ```bash
    mvn test
    ```
-5. **Manual frontend checks**  
-   - Verify login form redirects.
-   - Add / list products via UI.
+
+7. **Manual frontend checks**
+
+   * Verify register and login flows.
+   * Create, list, edit employees via UI.
 
 ---
 
 ## 📦 5. Production Build
 
-1. **Backend fat-jar**  
+1. **Backend fat-jar**
+
    ```bash
    mvn clean package
    ```
-2. **Frontend bundle**  
+2. **Frontend bundle**
+
    ```bash
    cd fasterp360-frontend
    npm run build
    ```
-3. **Serve static assets**  
-   - Copy `fasterp360-frontend/dist/*` → `src/main/resources/static/`
-4. **Run combined app**  
+3. **Serve static assets**
+
+   * Copy `fasterp360-frontend/dist/*` → `src/main/resources/static/`
+4. **Run combined app**
+
    ```bash
    java -jar target/fasterp360-0.0.1-SNAPSHOT.jar
    ```
-   - Now both API and frontend UI are served from **http://localhost:8080/**
+
+   * Now both API and frontend UI are served from **[http://localhost:8080/](http://localhost:8080/)**
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork & clone  
-2. Create feature branch (`git checkout -b feature/xyz`)  
-3. Commit & push  
-4. Open a PR against `main`  
+1. Fork & clone
+2. Create feature branch (`git checkout -b feature/xyz`)
+3. Commit & push
+4. Open a PR against `main`
 
 Please follow existing module structure under `src/main/java/com/project/fasterp360/module/…`.
 
@@ -241,5 +289,4 @@ Please follow existing module structure under `src/main/java/com/project/fasterp
 
 ## 📄 License
 
-This project is MIT-licensed. See [LICENSE](../LICENSE) for details.  
-```
+This project is MIT-licensed. See [LICENSE](../LICENSE) for details.
